@@ -1,0 +1,186 @@
+openapi: 3.0.1
+info:
+  title: External Recharge Microservice
+  version: "1.0"
+servers:
+  - url: 'https://ms.jawwylab.com/external-recharge'
+    description: Generated server url
+paths:
+  /topup-balance:
+    post:
+      tags:
+        - external recharge
+      operationId: create
+      parameters:
+        - name: X-Channel
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Accept-Language
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: context
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalRechargeRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        '409':
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        '502':
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+
+components:
+  schemas:
+    ErrorTemplate:
+      required:
+        - errorCode
+        - errorMessage
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: CCC-E001
+        errorMessage:
+          type: string
+          example: Parameter validation failure
+        errorDescription:
+          type: string
+          example: Parameter is not valid
+    ExternalRechargeRequestDto:
+      required:
+        - externalTransactionId
+      type: object
+      properties:
+        externalTransactionId:
+          type: string
+        type:
+          type: string
+        amount:
+          $ref: '#/components/schemas/AmountDto'
+        product:
+          $ref: '#/components/schemas/ProductDto'
+        partyAccount:
+          $ref: '#/components/schemas/PartyAccountDto'
+
+    AmountDto:
+      required:
+        - amount
+        - units
+      type: object
+      properties:
+        amount:
+          type: integer
+        units:
+          type: string
+      example:
+        amount: 50
+        units: "SAR"
+    
+    ProductDto:
+      required:
+        - '@type'
+        - id
+        - phoneNumber
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+        phoneNumber:
+          type: string
+        '@type':
+          type: string
+          enum:
+            - monetary
+            - voucher
+      example:
+        id: "0-1-5-603"
+        phoneNumber: "539604444"
+        type: "subscription"
+        
+    PartyAccountDto:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        href:
+          type: string
+      example:
+        id: "0-1-5-65"
+   
+    MessageDataDto:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        relationType:
+          type: string
+        referenceCode:
+          type: string
+        referenceDescription:
+          type: string
+    MessageDto:
+      type: object
+      properties:
+        code:
+          type: string
+        type:
+          type: string
+          enum:
+            - warning
+            - error
+        description:
+          type: string
+        data:
+          $ref: '#/components/schemas/MessageDataDto'
+
+   
