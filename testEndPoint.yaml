@@ -1,0 +1,45 @@
+openapi: 3.0.1
+info:
+  title: Api Documentation
+  description: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0"
+servers:
+- url: http://localhost:8080/
+tags:
+- name: test-controller
+  description: Test Controller
+paths:
+  /test/value/{value}:
+    get:
+      tags:
+      - test-controller
+      summary: getResponse
+      operationId: getResponseUsingGET
+      parameters:
+      - name: value
+        in: path
+        description: value
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
